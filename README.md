@@ -1,82 +1,19 @@
-# ipTracker serverless API
-The ipTracker project, created with [`aws-serverless-java-container`](https://github.com/awslabs/aws-serverless-java-container).
+# IpTracker Service - ObservePoint Coding Challenge
 
-The starter project defines a simple `/ping` resource that can accept `GET` requests with its tests.
+This repository contains the code for the IpTracker Service, which was created as part of the ObservePoint Coding Challenge. The challenge involved building a service that could track the number of times an IP address was requested.
 
-The project folder also includes a `template.yml` file. You can use this [SAM](https://github.com/awslabs/serverless-application-model) file to deploy the project to AWS Lambda and Amazon API Gateway or test in local with the [SAM CLI](https://github.com/awslabs/aws-sam-cli). 
+I have solved this challenge and deployed the service as an AWS Lambda function. The source code for the service is available in this repository. The repository also contains a test class that includes some end-to-end and load tests.
 
-## Pre-requisites
-* [AWS CLI](https://aws.amazon.com/cli/)
-* [SAM CLI](https://github.com/awslabs/aws-sam-cli)
-* [Gradle](https://gradle.org/) or [Maven](https://maven.apache.org/)
+### Testing the Service
 
-## Building the project
-You can use the SAM CLI to quickly build the project
-```bash
-$ mvn archetype:generate -DartifactId=ipTracker -DarchetypeGroupId=com.amazonaws.serverless.archetypes -DarchetypeArtifactId=aws-serverless-jersey-archetype -DarchetypeVersion=1.9.1 -DgroupId=com.carara -Dversion=1.0-SNAPSHOT -Dinteractive=false
-$ cd ipTracker
-$ sam build
-Building resource 'IpTrackerFunction'
-Running JavaGradleWorkflow:GradleBuild
-Running JavaGradleWorkflow:CopyArtifacts
+The test class, [IpTrackerTest](https://github.com/cararax/IpTrackerService/blob/master/src/test/java/com/carara/IpTrackerTest.java), is a JUnit test class used to test the functionality of the IpTracker service. The class contains three test methods:
 
-Build Succeeded
+`testRequestHandleWithGeneratedIPs()`: Tests the request-handled endpoint by sending HTTP POST requests with generated IP addresses and verifying that the responses have a status code of 200.
 
-Built Artifacts  : .aws-sam/build
-Built Template   : .aws-sam/build/template.yaml
+`testTop100WithGeneratedIPs()`: Tests the top100 endpoint by sending an HTTP GET request and verifying that the response contains a JSON array with a size of 99.
 
-Commands you can use next
-=========================
-[*] Invoke Function: sam local invoke
-[*] Deploy: sam deploy --guided
-```
+`testClear()`: Tests the clear endpoint by sending an HTTP GET request and verifying that the response has a status code of 200. The method then sends another HTTP GET request to the top100 endpoint to verify that the response is either null or an empty JSON array.
 
-## Testing locally with the SAM CLI
+To test the service, a Postman collection is available [here](https://www.postman.com/avionics-participant-80841886/workspace/iptracker-opservepoint-challenge/request/27166362-3d3decfe-111a-494c-a139-4353812618b1).
 
-From the project root folder - where the `template.yml` file is located - start the API with the SAM CLI.
-
-```bash
-$ sam local start-api
-
-...
-Mounting com.amazonaws.serverless.archetypes.StreamLambdaHandler::handleRequest (java11) at http://127.0.0.1:3000/{proxy+} [OPTIONS GET HEAD POST PUT DELETE PATCH]
-...
-```
-
-Using a new shell, you can send a test ping request to your API:
-
-```bash
-$ curl -s http://127.0.0.1:3000/ping | python -m json.tool
-
-{
-    "pong": "Hello, World!"
-}
-``` 
-
-## Deploying to AWS
-To deploy the application in your AWS account, you can use the SAM CLI's guided deployment process and follow the instructions on the screen
-
-```
-$ sam deploy --guided
-```
-
-Once the deployment is completed, the SAM CLI will print out the stack's outputs, including the new application URL. You can use `curl` or a web browser to make a call to the URL
-
-```
-...
--------------------------------------------------------------------------------------------------------------
-OutputKey-Description                        OutputValue
--------------------------------------------------------------------------------------------------------------
-IpTrackerApi - URL for application            https://xxxxxxxxxx.execute-api.us-west-2.amazonaws.com/Prod/pets
--------------------------------------------------------------------------------------------------------------
-```
-
-Copy the `OutputValue` into a browser or use curl to test your first request:
-
-```bash
-$ curl -s https://xxxxxxx.execute-api.us-west-2.amazonaws.com/Prod/ping | python -m json.tool
-
-{
-    "pong": "Hello, World!"
-}
-```
+Please note that a test with 20 million IP addresses was not performed due to cost considerations.
